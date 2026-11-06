@@ -1,0 +1,13 @@
+dist/
+coverage/
+node_modules/
+package-lock.json
+openspec/
+.claude/commands/
+.claude/skills/
+.idea/
+GLOSSARY.md
+*.tfstate*
+.env*
+CLAUDE.md
+TASKS.md

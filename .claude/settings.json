@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(npm test)",
+      "Bash(npm test:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run build)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(terraform fmt:*)",
+      "Bash(terraform validate:*)",
+      "Bash(terraform plan:*)"
+    ],
+    "ask": [
+      "Bash(terraform apply:*)",
+      "Bash(git push:*)",
+      "Bash(aws * create-*)",
+      "Bash(aws * delete-*)",
+      "Bash(aws * put-*)",
+      "Bash(aws * update-*)",
+      "Bash(aws * modify-*)",
+      "Bash(aws * attach-*)",
+      "Bash(aws * detach-*)",
+      "Bash(aws * associate-*)",
+      "Bash(aws * disassociate-*)",
+      "Bash(aws * tag-*)",
+      "Bash(aws * untag-*)",
+      "Bash(aws * run-*)",
+      "Bash(aws * start-*)",
+      "Bash(aws * stop-*)",
+      "Bash(aws * terminate-*)",
+      "Bash(aws * reboot-*)",
+      "Bash(aws * invoke*)",
+      "Bash(aws * publish*)",
+      "Bash(aws * add-*)",
+      "Bash(aws * remove-*)",
+      "Bash(aws * register-*)",
+      "Bash(aws * deregister-*)",
+      "Bash(aws * set-*)",
+      "Bash(aws * enable-*)",
+      "Bash(aws * disable-*)",
+      "Bash(aws * send-*)",
+      "Bash(aws * upload-*)",
+      "Bash(aws * import-*)",
+      "Bash(aws * restore-*)",
+      "Bash(aws * deploy*)",
+      "Bash(aws * execute-*)",
+      "Bash(aws s3 cp:*)",
+      "Bash(aws s3 mv:*)",
+      "Bash(aws s3 rm:*)",
+      "Bash(aws s3 sync:*)",
+      "Bash(aws s3 mb:*)",
+      "Bash(aws s3 rb:*)",
+      "mcp__aws-mcp__aws___run_script"
+    ],
+    "deny": [
+      "Read(./**/.env*)",
+      "Edit(./**/.env*)",
+      "Write(./**/.env*)",
+      "Read(./**/*.tfstate*)",
+      "Edit(./**/*.tfstate*)",
+      "Write(./**/*.tfstate*)",
+      "Read(./**/*.tfvars)",
+      "Edit(./**/*.tfvars)",
+      "Write(./**/*.tfvars)",
+      "Read(./**/*.pem)",
+      "Edit(./**/*.pem)",
+      "Read(./**/*.key)",
+      "Edit(./**/*.key)",
+      "Read(~/.aws/credentials)",
+      "Edit(~/.aws/credentials)",
+      "Read(~/.ssh/**)",
+      "Bash(rm -rf:*)",
+      "Bash(rm -fr:*)",
+      "Bash(rm -r -f:*)",
+      "Bash(rm -f -r:*)",
+      "Bash(rm -Rf:*)",
+      "Bash(rm -rF:*)",
+      "Bash(terraform destroy:*)",
+      "Bash(terraform apply -destroy:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit|Write|MultiEdit|NotebookEdit|Grep|Glob|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/block-secrets.mjs\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/format-and-lint.mjs\""
+          }
+        ]
+      }
+    ]
+  }
+}
