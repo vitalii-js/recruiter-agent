@@ -1,0 +1,28 @@
+schema: spec-driven
+
+context: |
+  Public portfolio repo; the persona is openly fictional.
+  MCP server must be stateless (runs on AWS Lambda; any instance serves any request).
+  All infrastructure via Terraform only; no manual AWS changes.
+  CI deploys via GitHub OIDC; never use long-lived AWS keys.
+  No secrets in the repo; secrets live in SSM Parameter Store.
+  Tools must return explicit "not found"; never invent skills or facts.
+  All agent output and artifacts in English.
+  Keep scope to the MVP; no features outside the current change.
+
+rules:
+  proposal:
+    - Always state what is out of scope
+  specs:
+    - Include negative scenarios (data not in profile -> "not found")
+  tasks:
+    - Every tool task includes unit tests
+    - Keep tasks small enough to review in one sitting
+
+operations:
+  apply:
+    guidance:
+      - Run lint and tests before marking a task done
+  archive:
+    guidance:
+      - Add a short entry to docs/decision-log.md before archiving
