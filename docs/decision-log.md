@@ -34,3 +34,31 @@ go in [`adr/`](adr/README.md).
   passes, and a planted fake GitHub token is blocked (exit 1).
 - The AWS MCP server (`mcp__aws-mcp__aws___run_script`) can change AWS resources without going
   through the Bash `aws` CLI rules. It is in the `ask` list as well.
+
+## 2026-11-07 — Task 1.1 follow-up: code review fixes (PR #1)
+
+**Done**
+
+- Terraform rules also cover `terraform -chdir=<dir> <cmd>` (deny: state/show/output/destroy;
+  ask: plan/apply). As a second layer, the hook blocks these commands with any global flags.
+- Restored the explicit `Write(...)` deny rules for secret files and added `*.tfvars.json`.
+- Hook hardening: it now catches `<` redirections, `.e*`/`.en?` globs, `printenv`/bare `env`,
+  `aws ssm ... --with-decryption` and `secretsmanager get-secret-value`. More AWS verbs that
+  change resources (`authorize-`, `revoke-`, `change-`, `batch-`, `copy-`, `reset-`, `replace-`,
+  `rotate-`) are in `ask`.
+- Hook false positives: Grep's `pattern` (search text) is no longer scanned, and `git commit`
+  messages are stripped before Bash commands are checked.
+- `prepare` no longer fails without a `.git` directory (Docker, Lambda packaging).
+- `@types/node` pinned to `^22` to match the Lambda Node.js 22 runtime.
+- New contract tests: `tests/hooks/block-secrets.test.ts` (45 cases, blocked and allowed).
+
+**What went wrong / how it was fixed**
+
+- The 4 pushed commits exposed a work email. The history was rewritten to use the GitHub noreply
+  address and both branches were force-pushed. The repo now uses the noreply address locally.
+- A local edit had left `settings.json` with a leading blank line and no trailing newline, which
+  failed `prettier --check`. Rewritten in Prettier style.
+- Known trade-off: Bash commands that only mention a secret file name in search text or a heredoc
+  are still blocked (this entry itself was first blocked when written via a shell heredoc).
+  From a command string alone, search text and a real file read cannot be told apart reliably.
+  Use the Grep, Edit or Write tools instead.
