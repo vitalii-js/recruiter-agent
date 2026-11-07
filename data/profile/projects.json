@@ -1,0 +1,115 @@
+[
+  {
+    "id": "fare-search-cache",
+    "name": "Fare Search Cache",
+    "employer": "Saltmarsh Travel",
+    "domain": "Travel",
+    "role": "Backend Engineer",
+    "period": {
+      "start": "2019-03",
+      "end": "2020-06"
+    },
+    "summary": "A caching layer in front of supplier fare APIs, with time-based invalidation per route.",
+    "tech": ["TypeScript", "Node.js", "Redis", "PostgreSQL"],
+    "outcomes": [
+      "p95 search latency dropped from 1.8 s to 450 ms.",
+      "Calls to supplier APIs dropped by 40%."
+    ]
+  },
+  {
+    "id": "idempotent-booking-service",
+    "name": "Idempotent Booking Service",
+    "employer": "Saltmarsh Travel",
+    "domain": "Travel",
+    "role": "Backend Engineer",
+    "period": {
+      "start": "2020-07",
+      "end": "2021-08"
+    },
+    "summary": "A rewrite of the booking API with idempotency keys and safe retries towards suppliers.",
+    "tech": ["TypeScript", "Node.js", "Fastify", "PostgreSQL", "Docker", "Jest"],
+    "outcomes": [
+      "Duplicate bookings caused by client retries dropped to zero.",
+      "Booking-related support tickets dropped by 35%."
+    ]
+  },
+  {
+    "id": "lab-results-pipeline",
+    "name": "Lab Results Pipeline",
+    "employer": "Meridale Health",
+    "domain": "Healthtech",
+    "role": "Senior Backend Engineer",
+    "period": {
+      "start": "2021-11",
+      "end": "2023-03"
+    },
+    "summary": "An event-driven pipeline that ingests lab results from partner labs, validates them and makes them available to clinicians.",
+    "tech": [
+      "TypeScript",
+      "AWS Lambda",
+      "Amazon SQS",
+      "Amazon EventBridge",
+      "Amazon DynamoDB",
+      "Terraform"
+    ],
+    "outcomes": [
+      "Time from lab result to clinician view dropped from 15 minutes (nightly batches) to under 30 seconds.",
+      "Handles about 120,000 results per day."
+    ]
+  },
+  {
+    "id": "patient-data-access-audit-log",
+    "name": "Patient Data Access Audit Log",
+    "employer": "Meridale Health",
+    "domain": "Healthtech",
+    "role": "Senior Backend Engineer",
+    "period": {
+      "start": "2023-04",
+      "end": "2024-01"
+    },
+    "summary": "An append-only audit log of every access to patient records, with a query API for the compliance team.",
+    "tech": [
+      "TypeScript",
+      "AWS Lambda",
+      "Amazon DynamoDB",
+      "Amazon S3",
+      "Amazon API Gateway",
+      "Terraform"
+    ],
+    "outcomes": [
+      "The yearly compliance audit found no issues in access logging.",
+      "Audit queries that took hours of manual work now take minutes."
+    ]
+  },
+  {
+    "id": "internal-delivery-platform",
+    "name": "Internal Delivery Platform",
+    "employer": "Meridale Health",
+    "domain": "Developer platforms",
+    "role": "Tech Lead",
+    "period": {
+      "start": "2024-03",
+      "end": null
+    },
+    "summary": "Shared Terraform modules and reusable GitHub Actions workflows that product teams use to create and ship new services.",
+    "tech": ["Terraform", "GitHub Actions", "AWS Lambda", "Amazon CloudWatch", "TypeScript"],
+    "outcomes": [
+      "Setting up a new service went from about 3 days to about 2 hours.",
+      "25 services were onboarded onto the platform."
+    ]
+  },
+  {
+    "id": "aws-cost-optimization",
+    "name": "AWS Cost Optimization",
+    "employer": "Meridale Health",
+    "domain": "Developer platforms",
+    "role": "Tech Lead",
+    "period": {
+      "start": "2024-09",
+      "end": "2025-03"
+    },
+    "summary": "A review of Lambda memory settings, DynamoDB capacity modes and log retention across all services.",
+    "tech": ["AWS Lambda", "Amazon DynamoDB", "Amazon CloudWatch", "Terraform"],
+    "outcomes": ["The monthly AWS bill dropped by 28%."]
+  }
+]

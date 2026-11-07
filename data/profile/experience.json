@@ -1,0 +1,72 @@
+[
+  {
+    "company": "Saltmarsh Travel",
+    "title": "Backend Engineer",
+    "domain": "Travel",
+    "period": {
+      "start": "2018-06",
+      "end": "2021-08"
+    },
+    "highlights": [
+      "Built and maintained the fare search and booking backend for a mid-size online travel agency.",
+      "Integrated with external supplier APIs for flights and hotels.",
+      "Moved the team's services from manual deploys to Docker-based deploys."
+    ],
+    "tech": ["TypeScript", "Node.js", "Express", "Fastify", "PostgreSQL", "Redis", "Docker", "Jest"]
+  },
+  {
+    "company": "Meridale Health",
+    "title": "Senior Backend Engineer",
+    "domain": "Healthtech",
+    "period": {
+      "start": "2021-09",
+      "end": "2024-02"
+    },
+    "highlights": [
+      "Designed event-driven processing of lab results on AWS serverless.",
+      "Built the audit log for access to patient data.",
+      "Wrote Terraform for the team's AWS infrastructure.",
+      "Built small React admin screens for internal operations staff."
+    ],
+    "tech": [
+      "TypeScript",
+      "Node.js",
+      "AWS Lambda",
+      "Amazon SQS",
+      "Amazon EventBridge",
+      "Amazon DynamoDB",
+      "Amazon S3",
+      "Amazon API Gateway",
+      "Amazon CloudWatch",
+      "PostgreSQL",
+      "Terraform",
+      "React",
+      "Jest"
+    ]
+  },
+  {
+    "company": "Meridale Health",
+    "title": "Tech Lead, Platform Team",
+    "domain": "Developer platforms",
+    "period": {
+      "start": "2024-03",
+      "end": null
+    },
+    "highlights": [
+      "Leads a platform team of 4 engineers that serves the product teams.",
+      "Owns shared Terraform modules and reusable GitHub Actions workflows.",
+      "Led an AWS cost optimization effort.",
+      "Mentors 2 junior engineers."
+    ],
+    "tech": [
+      "TypeScript",
+      "Node.js",
+      "Terraform",
+      "GitHub Actions",
+      "AWS Lambda",
+      "Amazon DynamoDB",
+      "Amazon CloudWatch",
+      "Vitest"
+    ]
+  }
+]

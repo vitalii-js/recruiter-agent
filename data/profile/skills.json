@@ -1,0 +1,177 @@
+[
+  {
+    "name": "TypeScript",
+    "category": "language",
+    "years": 8,
+    "level": "expert",
+    "aliases": ["TS"]
+  },
+  {
+    "name": "JavaScript",
+    "category": "language",
+    "years": 8,
+    "level": "expert",
+    "aliases": ["JS"]
+  },
+  {
+    "name": "SQL",
+    "category": "language",
+    "years": 8,
+    "level": "advanced",
+    "aliases": []
+  },
+  {
+    "name": "Node.js",
+    "category": "runtime",
+    "years": 8,
+    "level": "expert",
+    "aliases": ["Node", "NodeJS"]
+  },
+  {
+    "name": "Express",
+    "category": "framework",
+    "years": 3,
+    "level": "advanced",
+    "aliases": ["Express.js"]
+  },
+  {
+    "name": "Fastify",
+    "category": "framework",
+    "years": 1,
+    "level": "advanced",
+    "aliases": []
+  },
+  {
+    "name": "React",
+    "category": "framework",
+    "years": 2,
+    "level": "working",
+    "aliases": ["React.js"]
+  },
+  {
+    "name": "AWS",
+    "category": "cloud",
+    "years": 5,
+    "level": "advanced",
+    "aliases": ["Amazon Web Services"]
+  },
+  {
+    "name": "AWS Lambda",
+    "category": "cloud",
+    "years": 5,
+    "level": "expert",
+    "aliases": ["Lambda"]
+  },
+  {
+    "name": "Amazon SQS",
+    "category": "cloud",
+    "years": 3,
+    "level": "advanced",
+    "aliases": ["SQS"]
+  },
+  {
+    "name": "Amazon EventBridge",
+    "category": "cloud",
+    "years": 2,
+    "level": "advanced",
+    "aliases": ["EventBridge"]
+  },
+  {
+    "name": "Amazon S3",
+    "category": "cloud",
+    "years": 3,
+    "level": "advanced",
+    "aliases": ["S3"]
+  },
+  {
+    "name": "Amazon API Gateway",
+    "category": "cloud",
+    "years": 3,
+    "level": "advanced",
+    "aliases": ["API Gateway"]
+  },
+  {
+    "name": "Amazon CloudWatch",
+    "category": "cloud",
+    "years": 5,
+    "level": "advanced",
+    "aliases": ["CloudWatch"]
+  },
+  {
+    "name": "PostgreSQL",
+    "category": "database",
+    "years": 8,
+    "level": "advanced",
+    "aliases": ["Postgres"]
+  },
+  {
+    "name": "Amazon DynamoDB",
+    "category": "database",
+    "years": 5,
+    "level": "advanced",
+    "aliases": ["DynamoDB"]
+  },
+  {
+    "name": "Redis",
+    "category": "database",
+    "years": 3,
+    "level": "working",
+    "aliases": []
+  },
+  {
+    "name": "Terraform",
+    "category": "infrastructure",
+    "years": 5,
+    "level": "expert",
+    "aliases": []
+  },
+  {
+    "name": "Docker",
+    "category": "infrastructure",
+    "years": 3,
+    "level": "advanced",
+    "aliases": []
+  },
+  {
+    "name": "GitHub Actions",
+    "category": "ci-cd",
+    "years": 3,
+    "level": "advanced",
+    "aliases": []
+  },
+  {
+    "name": "Jest",
+    "category": "testing",
+    "years": 5,
+    "level": "advanced",
+    "aliases": []
+  },
+  {
+    "name": "Vitest",
+    "category": "testing",
+    "years": 2,
+    "level": "advanced",
+    "aliases": []
+  },
+  {
+    "name": "Event-driven architecture",
+    "category": "practice",
+    "years": 5,
+    "level": "advanced",
+    "aliases": ["EDA"]
+  },
+  {
+    "name": "Technical leadership",
+    "category": "practice",
+    "years": 3,
+    "level": "advanced",
+    "aliases": ["Tech lead"]
+  },
+  {
+    "name": "Incident response",
+    "category": "practice",
+    "years": 5,
+    "level": "advanced",
+    "aliases": ["On-call", "Production support"]
+  }
+]

@@ -131,3 +131,40 @@ go in [`adr/`](adr/README.md).
 - Stopping point: three review rounds found smaller hook gaps each time, and each new rule risked
   new false positives. Forms like `node -p process.env` are accepted as out of scope for a regex
   hook (see README). The hook is not reviewed further in this task.
+
+## 2026-11-07 — Tasks 1.2 + 1.3: Persona spec and profile data (OpenSpec `persona-profile`)
+
+**Done**
+
+- `specs/persona.md`: Alex Rivera (openly fictional), Senior Backend / Platform Engineer, 8 years,
+  TypeScript/Node.js + AWS serverless + Terraform. Domains are travel and healthtech, with some
+  tech-lead work. It has 6 projects with numeric outcomes and 25 skills with years, level and
+  aliases. Two "Not in profile" lists (16 skill groups, 7 logistics/compensation topics) use a
+  fixed `- Name -- terms: a, b` format that tests can parse. The domains and dates are chosen so
+  the persona does not mirror the repo owner. The owner approved the spec before any data was
+  generated.
+- `data/profile/{summary,skills,projects,experience}.json`, generated from the approved spec by a
+  one-off script (not committed), so facts are copied rather than retyped.
+- `src/profile/schema.ts`: strict Zod 4 schemas (an unknown field such as `salary` fails),
+  `fictional: z.literal(true)`, `YYYY-MM` periods, and `validateSection` with path-prefixed
+  errors (`skills[1].years: ...`). `src/profile/consistency.ts` checks project and experience
+  tech against skills, alias uniqueness, skill years against total, and unique project ids.
+  `src/profile/persona-spec.ts` parses the "Not in profile" lists and headings and finds
+  whole-word terms in any string or key.
+- `tests/profile/`: 50 tests. They include the committed data against the schema, consistency,
+  trap and topic terms, project and experience names against the spec, and copy tests that prove
+  the guard fires.
+
+**What went wrong / how it was fixed**
+
+- The first draft of the spec overstated some skill years (Fastify 2, Docker 6, SQS 5) compared
+  with the periods where the skill appears. They were recalculated from the experience periods
+  before review, and the consistency check now caps years at total experience.
+- Two design details changed during implementation: `summary.disclaimer` (the spec requires the
+  text to say "fictional") and `project.employer` (in the persona spec) were added to the schema.
+  Project periods allow `end: null`, because one project is ongoing.
+- ESLint rejected `const { years: _years, ...rest }` in tests (no-unused-vars without an ignore
+  pattern). Replaced with a small `without()` helper instead of loosening the lint config.
+- The secret-blocking hook blocked a Bash heredoc that held a Python regex `(.*?)` (read as a
+  dotfile glob). This is the known trade-off from Task 1.1. The script was written with the Write
+  tool instead.

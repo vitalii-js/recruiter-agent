@@ -1,0 +1,37 @@
+{
+  "name": "Alex Rivera",
+  "fictional": true,
+  "disclaimer": "Alex Rivera is a fictional person. This persona exists only to demonstrate an AI agent that answers recruiters' questions. Employers, projects and the university in this profile are invented.",
+  "title": "Senior Backend / Platform Engineer",
+  "seniority": "Senior, currently Tech Lead of a platform team",
+  "yearsOfExperience": 8,
+  "headline": "Backend and platform engineer who builds event-driven systems on AWS serverless with TypeScript and Terraform.",
+  "domains": [
+    {
+      "name": "Travel",
+      "description": "fare search, booking flows, supplier API integrations."
+    },
+    {
+      "name": "Healthtech",
+      "description": "lab results processing, patient data access auditing, HIPAA-driven compliance work."
+    },
+    {
+      "name": "Developer platforms",
+      "description": "internal tooling, infrastructure modules, CI/CD for product teams."
+    }
+  ],
+  "leadership": [
+    "Tech Lead of a platform team of 4 engineers since March 2024.",
+    "Mentored 2 junior engineers to mid-level.",
+    "Introduced a lightweight RFC process for cross-team technical decisions.",
+    "Took part in the on-call rotation for production services since 2021."
+  ],
+  "education": [
+    {
+      "degree": "BSc",
+      "field": "Computer Science",
+      "institution": "University of Northbrook (fictional)",
+      "graduationYear": 2018
+    }
+  ]
+}
