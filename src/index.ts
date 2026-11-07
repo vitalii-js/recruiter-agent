@@ -1,2 +1,2 @@
-// Entry point placeholder. The MCP server is implemented in Task 1.4.
-export {};
+// Lambda entry point (the Function URL handler). Local development uses src/dev.ts.
+export { handler } from './lambda.js';

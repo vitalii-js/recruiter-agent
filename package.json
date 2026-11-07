@@ -10,6 +10,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json && node dist/dev.js",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
@@ -28,6 +29,8 @@
     "vitest": "^5.1.0"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1164.0",
+    "@modelcontextprotocol/sdk": "~1.32.2",
     "zod": "^4.6.7"
   }
 }
