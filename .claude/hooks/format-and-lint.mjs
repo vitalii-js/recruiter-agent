@@ -48,7 +48,7 @@ const bin = (name) => path.join(projectDir, 'node_modules', '.bin', name);
 const ext = path.extname(filePath).toLowerCase();
 
 if (PRETTIER_EXT.has(ext) && existsSync(bin('prettier'))) {
-  // --ignore-path respects .prettierignore; ignored files are silently skipped.
+  // Prettier reads .prettierignore from cwd by default; ignored files are silently skipped.
   const result = spawnSync(bin('prettier'), ['--write', '--log-level', 'warn', rel], {
     cwd: projectDir,
     encoding: 'utf8',

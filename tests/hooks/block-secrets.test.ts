@@ -62,6 +62,19 @@ describe('block-secrets hook: blocked (exit 2)', () => {
     'head .??*',
     'cat .[!.]*',
     'cat certs/server.key',
+    // Third review: case, separators, scoped commit stripping, token caches.
+    'cat .ENV',
+    'cat .Env.local',
+    'echo X=1 >.env',
+    'cat {README.md,.env}',
+    'cat \\.env',
+    "git commit -m ok; somecmd -m '.env'",
+    'cat ~/.aws/sso/cache/abc.json',
+    'cat ~/.aws/cli/cache/x.json',
+    'export',
+    'declare',
+    'aws sso get-role-credentials --role-name r --account-id 1 --access-token t',
+    'cat dir/.e*',
   ])('Bash: %s', (command) => {
     expect(bash(command)).toBe(2);
   });
@@ -84,6 +97,12 @@ describe('block-secrets hook: blocked (exit 2)', () => {
       'mcp__aws-mcp__aws___run_script',
       { code: "params={'Name': '/app/key', 'WithDecryption': True}" },
     ],
+    [
+      'mcp__aws-mcp__aws___run_script',
+      { code: "await call_boto3(service_name='sso', operation_name='GetRoleCredentials')" },
+    ],
+    ['Read', { file_path: '/repo/.ENV' }],
+    ['Glob', { pattern: '**/.*' }],
   ])('%s: %j', (tool, input) => {
     expect(runHook(tool, input)).toBe(2);
   });
@@ -106,6 +125,13 @@ describe('block-secrets hook: allowed (exit 0)', () => {
     'ls src/*.ts',
     'npx eslint .claude/hooks/*.mjs',
     'cat ./README.md',
+    "jq '.[0]' package.json",
+    `jq '.scripts["lint"]' package.json`,
+    "sed -n 's/.*version//p' package.json",
+    "grep -E '^.*(error)' log.txt",
+    'export NODE_ENV=test',
+    'git commit -m "Ignore .env" -m "Second paragraph about .tfvars"',
+    'ls .github/*',
   ])('Bash: %s', (command) => {
     expect(bash(command)).toBe(0);
   });

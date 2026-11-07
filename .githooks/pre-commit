@@ -9,4 +9,12 @@ if ! command -v gitleaks >/dev/null 2>&1; then
   exit 1
 fi
 
+# gitleaks' built-in config skips package-lock.json, so check the one place a
+# lockfile can carry a secret: a registry URL with embedded credentials.
+if git diff --cached --name-only | grep -q '^package-lock\.json$' &&
+  git show :package-lock.json | grep -nE '"resolved": *"[a-z+]+://[^"/]*@'; then
+  echo "pre-commit: package-lock.json has a registry URL with credentials. Remove them." >&2
+  exit 1
+fi
+
 exec gitleaks git --pre-commit --staged --redact --verbose --config .gitleaks.toml

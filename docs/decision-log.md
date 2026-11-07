@@ -101,3 +101,33 @@ go in [`adr/`](adr/README.md).
   `terraform console` in their text. Workaround: Edit tool, or a script file whose path is clean.
 - Accepted limits: `obj.key` in code still matches as a key file, and `printenv` is blocked even
   inside search text. The hook is documented in README as an extra layer, not the boundary.
+
+## 2026-11-07 — Task 1.1 follow-up: third code review (PR #1)
+
+**Done**
+
+- Hook path patterns are case-insensitive (macOS opens `.env` for `.ENV`).
+- More characters may precede a file name (`>`, `,`, `{`, `\`), so `echo X=1 >.env` and
+  `cat {a,.env}` are caught.
+- The dotfile-glob check now looks only at unquoted tokens and blocks only globs that can expand
+  to a .env name. It converts the glob to a regex and tests it against `.env`, `.env.local` and
+  `.envrc`. This fixes the false positives I had added (`jq '.[0]'`, `sed 's/.*//'`).
+- Commit-message stripping is limited to the `git commit` part of the command.
+- The whole `~/.aws/` directory is blocked, including the SSO and CLI token caches. Bare
+  `export`/`declare` are blocked, and so are SSO/Cognito credential calls (CLI and SDK).
+- The format-and-lint test runs in a temp project outside the repo (with `node_modules` linked
+  in), so a killed test run cannot leave a broken file in the working tree. A first attempt that
+  put the temp folder in `.prettierignore` made Prettier skip the broken file, and the test caught
+  that.
+- Tests: 100 hook cases.
+
+**What went wrong / how it was fixed**
+
+- I tried to replace the whole-file lockfile allowlist in gitleaks with an `integrity`-only one.
+  A planted token in `package-lock.json` was still not reported: gitleaks' built-in default config
+  already skips lockfiles, and `useDefault` cannot undo that. Fix: removed our redundant
+  allowlist, and the pre-commit hook now blocks lockfile `resolved` URLs with credentials. Verified
+  in a throwaway repo (clean lockfile passes, `https://user:tok@...` is blocked).
+- Stopping point: three review rounds found smaller hook gaps each time, and each new rule risked
+  new false positives. Forms like `node -p process.env` are accepted as out of scope for a regex
+  hook (see README). The hook is not reviewed further in this task.
