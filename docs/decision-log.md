@@ -70,3 +70,34 @@ go in [`adr/`](adr/README.md).
   files are not type-checked, so they were removed. Verified with a temporary `scripts/*.ts`.
 - The OpenSpec `archive` guidance ("add a decision-log entry") had been dropped. OpenSpec 1.16
   supports `operations.archive.guidance`, so it is restored.
+
+## 2026-11-07 — Task 1.1 follow-up: second code review (PR #1)
+
+**Done**
+
+- Fixed a bypass I had introduced: commit-message stripping hid `-m "$(cat .env)"`. Only text the
+  shell does not expand is stripped now (single quotes, double quotes without `$(`/backticks,
+  heredocs with a quoted delimiter).
+- `.gitignore`: `.env*` (with `!.env.example`) and `*.tfvars.json`.
+- AWS: denied the CLI commands that print credentials (`configure export-credentials`/`get`,
+  `sts get-session-token`/`assume-role`, `ecr get-login-password`). The hook catches them too.
+- Terraform: `apply --destroy` and `console` are denied.
+- The PreToolUse hook now also runs for MCP tools (`mcp__.*`). It scans every string in their
+  input, plus AWS SDK names such as `GetSecretValue` and `WithDecryption`.
+- AWS permission model: replaced the verb-by-verb ask list (never complete) with
+  `Bash(aws:*)` in `ask`.
+- ESLint: `.cjs`/`.jsx` no longer use typed linting. tsconfig includes `.mts`/`.cts`.
+- `format-and-lint.mjs` now reports a Prettier parse failure (exit 2) instead of ignoring it.
+- Hook: catches multi-line commands, `sh -c`, `env -0`, `export -p`, `set`, and any dotfile glob.
+  `.key`/`.pem` only match after a file name, so `jq '.key'` passes.
+- Tests: 80 cases, including a test for the format-and-lint hook.
+
+**What went wrong / how it was fixed**
+
+- The plan was to put `aws:*` in ask and allow read-only verbs. Claude Code checks deny, then ask,
+  then allow, so an ask rule always beats an allow rule. Accepted: every Bash `aws` command asks.
+  AWS work goes through the AWS MCP server, which is in ask anyway.
+- The hook blocked my own edit scripts three times, because they mentioned `.env`, `tfvars` or
+  `terraform console` in their text. Workaround: Edit tool, or a script file whose path is clean.
+- Accepted limits: `obj.key` in code still matches as a key file, and `printenv` is blocked even
+  inside search text. The hook is documented in README as an extra layer, not the boundary.

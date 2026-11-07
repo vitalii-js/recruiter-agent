@@ -28,7 +28,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.js', '**/*.mjs'],
+    files: ['**/*.js', '**/*.mjs', '**/*.cjs', '**/*.jsx'],
     ...tseslint.configs.disableTypeChecked,
   },
   prettier,

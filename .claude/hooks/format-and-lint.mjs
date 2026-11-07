@@ -49,10 +49,15 @@ const ext = path.extname(filePath).toLowerCase();
 
 if (PRETTIER_EXT.has(ext) && existsSync(bin('prettier'))) {
   // --ignore-path respects .prettierignore; ignored files are silently skipped.
-  spawnSync(bin('prettier'), ['--write', '--log-level', 'warn', rel], {
+  const result = spawnSync(bin('prettier'), ['--write', '--log-level', 'warn', rel], {
     cwd: projectDir,
-    stdio: ['ignore', 'ignore', 'inherit'],
+    encoding: 'utf8',
   });
+  // Non-zero means Prettier could not parse the file (e.g. broken JSON/YAML).
+  if (result.status !== 0) {
+    process.stderr.write(`Prettier failed on ${rel}:\n${result.stdout}${result.stderr}`);
+    process.exit(2);
+  }
 }
 
 if (ESLINT_EXT.has(ext) && existsSync(bin('eslint'))) {

@@ -54,6 +54,11 @@ Repository layout:
 _TBD._ The guardrails are committed in `.claude/settings.json`: secret files are blocked, and
 Prettier and ESLint run after every edit. Commits are scanned by gitleaks.
 
+The secret-blocking hook (`.claude/hooks/block-secrets.mjs`) is a best-effort extra layer: a
+regex over a shell command can never catch every form. The real boundary is that there are no
+secrets in the repo to leak. Secret files are gitignored, gitleaks scans every commit, and runtime
+secrets live in AWS SSM Parameter Store. Every Bash `aws` command needs explicit approval.
+
 ## License
 
 [MIT](LICENSE)

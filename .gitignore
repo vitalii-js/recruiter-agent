@@ -12,8 +12,8 @@ coverage/
 *.log
 
 # Secrets and local env
-.env
-.env.*
+.env*
+!.env.example
 *.pem
 *.key
 *.p12
@@ -24,6 +24,7 @@ coverage/
 *.tfstate
 *.tfstate.*
 *.tfvars
+*.tfvars.json
 *.tfplan
 crash.log
 crash.*.log
