@@ -62,3 +62,11 @@ go in [`adr/`](adr/README.md).
   are still blocked (this entry itself was first blocked when written via a shell heredoc).
   From a command string alone, search text and a real file read cannot be told apart reliably.
   Use the Grep, Edit or Write tools instead.
+- Vitest only collected `tests/**`, and `passWithNoTests` hid any test placed next to the code.
+  It now also collects `src/**` and `evals/**`, and `passWithNoTests` is removed, so an empty
+  test run fails. Verified with a temporary test in `src/`.
+- Typed ESLint failed on any `.ts` file outside the tsconfig `include` (for example `scripts/`).
+  tsconfig now includes `**/*.ts`. The `allowDefaultProject` globs did nothing, because js/mjs
+  files are not type-checked, so they were removed. Verified with a temporary `scripts/*.ts`.
+- The OpenSpec `archive` guidance ("add a decision-log entry") had been dropped. OpenSpec 1.16
+  supports `operations.archive.guidance`, so it is restored.

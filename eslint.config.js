@@ -22,7 +22,7 @@ export default tseslint.config(
     languageOptions: {
       globals: globals.node,
       parserOptions: {
-        projectService: { allowDefaultProject: ['*.js', '.claude/hooks/*.mjs'] },
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },

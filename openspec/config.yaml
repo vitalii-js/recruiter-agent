@@ -23,3 +23,6 @@ operations:
   apply:
     guidance:
       - Run lint and tests before marking a task done
+  archive:
+    guidance:
+      - Add a short entry to docs/decision-log.md before archiving

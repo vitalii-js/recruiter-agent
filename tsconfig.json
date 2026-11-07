@@ -18,5 +18,6 @@
     "resolveJsonModule": true,
     "noEmit": true
   },
-  "include": ["src", "tests", "evals", "*.config.ts"]
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist", "coverage", "infra/**/.terraform"]
 }
