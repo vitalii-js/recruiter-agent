@@ -56,4 +56,4 @@ Prettier and ESLint run after every edit. Commits are scanned by gitleaks.
 
 ## License
 
-_TBD._
+[MIT](LICENSE)
