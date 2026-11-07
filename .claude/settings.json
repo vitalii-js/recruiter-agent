@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(npm test:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run build)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(terraform fmt:*)",
+      "Bash(terraform validate:*)"
+    ],
+    "ask": [
+      "Bash(terraform plan:*)",
+      "Bash(terraform apply:*)",
+      "Bash(terraform -chdir=* plan:*)",
+      "Bash(terraform -chdir=* apply:*)",
+      "Bash(git push:*)",
+      "Bash(aws:*)",
+      "mcp__aws-mcp__aws___run_script"
+    ],
+    "deny": [
+      "Read(./**/.env*)",
+      "Edit(./**/.env*)",
+      "Write(./**/.env*)",
+      "Read(./**/*.tfstate*)",
+      "Edit(./**/*.tfstate*)",
+      "Write(./**/*.tfstate*)",
+      "Read(./**/*.tfvars)",
+      "Edit(./**/*.tfvars)",
+      "Write(./**/*.tfvars)",
+      "Read(./**/*.tfvars.json)",
+      "Edit(./**/*.tfvars.json)",
+      "Write(./**/*.tfvars.json)",
+      "Read(./**/*.pem)",
+      "Edit(./**/*.pem)",
+      "Read(./**/*.key)",
+      "Edit(./**/*.key)",
+      "Read(~/.aws/credentials)",
+      "Edit(~/.aws/credentials)",
+      "Read(~/.aws/sso/cache/**)",
+      "Read(~/.aws/cli/cache/**)",
+      "Read(~/.ssh/**)",
+      "Edit(~/.ssh/**)",
+      "Bash(terraform state:*)",
+      "Bash(terraform show:*)",
+      "Bash(terraform output:*)",
+      "Bash(terraform destroy:*)",
+      "Bash(terraform apply -destroy:*)",
+      "Bash(terraform -chdir=* state:*)",
+      "Bash(terraform -chdir=* show:*)",
+      "Bash(terraform -chdir=* output:*)",
+      "Bash(terraform -chdir=* destroy:*)",
+      "Bash(terraform -chdir=* apply -destroy:*)",
+      "Bash(aws * secretsmanager get-secret-value*)",
+      "Bash(aws secretsmanager get-secret-value:*)",
+      "Bash(terraform console:*)",
+      "Bash(terraform -chdir=* console:*)",
+      "Bash(aws configure export-credentials:*)",
+      "Bash(aws configure get:*)",
+      "Bash(aws * configure export-credentials*)",
+      "Bash(aws * configure get *)",
+      "Bash(aws sts get-session-token:*)",
+      "Bash(aws sts get-federation-token:*)",
+      "Bash(aws sts assume-role*)",
+      "Bash(aws * sts get-session-token*)",
+      "Bash(aws * sts get-federation-token*)",
+      "Bash(aws * sts assume-role*)",
+      "Bash(aws ecr get-login-password:*)",
+      "Bash(aws * ecr get-login-password*)",
+      "Bash(aws ssm get-parameter* --with-decryption*)",
+      "Bash(aws * ssm get-parameter* --with-decryption*)",
+      "Bash(rm -rf:*)",
+      "Bash(rm -fr:*)",
+      "Bash(rm -r -f:*)",
+      "Bash(rm -f -r:*)",
+      "Bash(rm -Rf:*)",
+      "Bash(rm -rF:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit|Write|MultiEdit|NotebookEdit|Grep|Glob|Bash|mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/block-secrets.mjs\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/format-and-lint.mjs\""
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,133 @@
+# Decision log
+
+Short entries per task: what was done, what went wrong, how it was fixed. Architectural decisions
+go in [`adr/`](adr/README.md).
+
+## 2026-11-06 — Task 1.1: Repo setup
+
+**Done**
+
+- TypeScript (strict, NodeNext, ESM), ESLint (flat config, typescript-eslint type-checked,
+  eslint-config-prettier), Prettier, Vitest. Folders `src`, `tests`, `evals`, `infra`, `docs`,
+  `specs`. README skeleton. ADRs 0001–0006.
+- `.claude/settings.json`: a PreToolUse hook (`block-secrets.mjs`) blocks secret files (`.env*`,
+  `*.tfstate*`, `*.tfvars`, keys, AWS credentials) for Read/Edit/Write/Grep/Glob and Bash commands.
+  A PostToolUse hook (`format-and-lint.mjs`) runs Prettier + ESLint on the edited file.
+  Permissions follow allow, ask and deny lists.
+- Gitleaks pre-commit hook in `.githooks/`, activated by the npm `prepare` script
+  (`core.hooksPath`). No husky. The hook fails closed if gitleaks is not installed.
+- OpenSpec was already initialized (`openspec/config.yaml` holds the CLAUDE.md context).
+
+**What went wrong / how it was fixed**
+
+- The secret-blocking hook went live as soon as it was written. It blocked my own Bash test
+  command, because the command text contained `.env` paths. Fix: moved the test cases into a
+  separate script so the command line itself has no secret paths. This confirms that the hook
+  checks Bash commands, not just file tools.
+- `npm audit` reports 10 moderate findings: a minimatch ReDoS inside the eslint 10 /
+  typescript-eslint dependency tree. These are dev-only tools that never run on untrusted input.
+  The suggested fix downgrades eslint to 9, so we accept the finding and will re-check when
+  upstream releases a fix.
+- `npm run format` reformatted the hand-written TASKS.md (escaped `*` characters). Fix: reverted it
+  and added `CLAUDE.md` and `TASKS.md` to `.prettierignore`.
+- gitleaks was not installed. It is now installed with Homebrew (8.30.1). Verified: the clean tree
+  passes, and a planted fake GitHub token is blocked (exit 1).
+- The AWS MCP server (`mcp__aws-mcp__aws___run_script`) can change AWS resources without going
+  through the Bash `aws` CLI rules. It is in the `ask` list as well.
+
+## 2026-11-07 — Task 1.1 follow-up: code review fixes (PR #1)
+
+**Done**
+
+- Terraform rules also cover `terraform -chdir=<dir> <cmd>` (deny: state/show/output/destroy;
+  ask: plan/apply). As a second layer, the hook blocks these commands with any global flags.
+- Restored the explicit `Write(...)` deny rules for secret files and added `*.tfvars.json`.
+- Hook hardening: it now catches `<` redirections, `.e*`/`.en?` globs, `printenv`/bare `env`,
+  `aws ssm ... --with-decryption` and `secretsmanager get-secret-value`. More AWS verbs that
+  change resources (`authorize-`, `revoke-`, `change-`, `batch-`, `copy-`, `reset-`, `replace-`,
+  `rotate-`) are in `ask`.
+- Hook false positives: Grep's `pattern` (search text) is no longer scanned, and `git commit`
+  messages are stripped before Bash commands are checked.
+- `prepare` no longer fails without a `.git` directory (Docker, Lambda packaging).
+- `@types/node` pinned to `^22` to match the Lambda Node.js 22 runtime.
+- New contract tests: `tests/hooks/block-secrets.test.ts` (45 cases, blocked and allowed).
+
+**What went wrong / how it was fixed**
+
+- The 4 pushed commits exposed a work email. The history was rewritten to use the GitHub noreply
+  address and both branches were force-pushed. The repo now uses the noreply address locally.
+- A local edit had left `settings.json` with a leading blank line and no trailing newline, which
+  failed `prettier --check`. Rewritten in Prettier style.
+- Known trade-off: Bash commands that only mention a secret file name in search text or a heredoc
+  are still blocked (this entry itself was first blocked when written via a shell heredoc).
+  From a command string alone, search text and a real file read cannot be told apart reliably.
+  Use the Grep, Edit or Write tools instead.
+- Vitest only collected `tests/**`, and `passWithNoTests` hid any test placed next to the code.
+  It now also collects `src/**` and `evals/**`, and `passWithNoTests` is removed, so an empty
+  test run fails. Verified with a temporary test in `src/`.
+- Typed ESLint failed on any `.ts` file outside the tsconfig `include` (for example `scripts/`).
+  tsconfig now includes `**/*.ts`. The `allowDefaultProject` globs did nothing, because js/mjs
+  files are not type-checked, so they were removed. Verified with a temporary `scripts/*.ts`.
+- The OpenSpec `archive` guidance ("add a decision-log entry") had been dropped. OpenSpec 1.16
+  supports `operations.archive.guidance`, so it is restored.
+
+## 2026-11-07 — Task 1.1 follow-up: second code review (PR #1)
+
+**Done**
+
+- Fixed a bypass I had introduced: commit-message stripping hid `-m "$(cat .env)"`. Only text the
+  shell does not expand is stripped now (single quotes, double quotes without `$(`/backticks,
+  heredocs with a quoted delimiter).
+- `.gitignore`: `.env*` (with `!.env.example`) and `*.tfvars.json`.
+- AWS: denied the CLI commands that print credentials (`configure export-credentials`/`get`,
+  `sts get-session-token`/`assume-role`, `ecr get-login-password`). The hook catches them too.
+- Terraform: `apply --destroy` and `console` are denied.
+- The PreToolUse hook now also runs for MCP tools (`mcp__.*`). It scans every string in their
+  input, plus AWS SDK names such as `GetSecretValue` and `WithDecryption`.
+- AWS permission model: replaced the verb-by-verb ask list (never complete) with
+  `Bash(aws:*)` in `ask`.
+- ESLint: `.cjs`/`.jsx` no longer use typed linting. tsconfig includes `.mts`/`.cts`.
+- `format-and-lint.mjs` now reports a Prettier parse failure (exit 2) instead of ignoring it.
+- Hook: catches multi-line commands, `sh -c`, `env -0`, `export -p`, `set`, and any dotfile glob.
+  `.key`/`.pem` only match after a file name, so `jq '.key'` passes.
+- Tests: 80 cases, including a test for the format-and-lint hook.
+
+**What went wrong / how it was fixed**
+
+- The plan was to put `aws:*` in ask and allow read-only verbs. Claude Code checks deny, then ask,
+  then allow, so an ask rule always beats an allow rule. Accepted: every Bash `aws` command asks.
+  AWS work goes through the AWS MCP server, which is in ask anyway.
+- The hook blocked my own edit scripts three times, because they mentioned `.env`, `tfvars` or
+  `terraform console` in their text. Workaround: Edit tool, or a script file whose path is clean.
+- Accepted limits: `obj.key` in code still matches as a key file, and `printenv` is blocked even
+  inside search text. The hook is documented in README as an extra layer, not the boundary.
+
+## 2026-11-07 — Task 1.1 follow-up: third code review (PR #1)
+
+**Done**
+
+- Hook path patterns are case-insensitive (macOS opens `.env` for `.ENV`).
+- More characters may precede a file name (`>`, `,`, `{`, `\`), so `echo X=1 >.env` and
+  `cat {a,.env}` are caught.
+- The dotfile-glob check now looks only at unquoted tokens and blocks only globs that can expand
+  to a .env name. It converts the glob to a regex and tests it against `.env`, `.env.local` and
+  `.envrc`. This fixes the false positives I had added (`jq '.[0]'`, `sed 's/.*//'`).
+- Commit-message stripping is limited to the `git commit` part of the command.
+- The whole `~/.aws/` directory is blocked, including the SSO and CLI token caches. Bare
+  `export`/`declare` are blocked, and so are SSO/Cognito credential calls (CLI and SDK).
+- The format-and-lint test runs in a temp project outside the repo (with `node_modules` linked
+  in), so a killed test run cannot leave a broken file in the working tree. A first attempt that
+  put the temp folder in `.prettierignore` made Prettier skip the broken file, and the test caught
+  that.
+- Tests: 100 hook cases.
+
+**What went wrong / how it was fixed**
+
+- I tried to replace the whole-file lockfile allowlist in gitleaks with an `integrity`-only one.
+  A planted token in `package-lock.json` was still not reported: gitleaks' built-in default config
+  already skips lockfiles, and `useDefault` cannot undo that. Fix: removed our redundant
+  allowlist, and the pre-commit hook now blocks lockfile `resolved` URLs with credentials. Verified
+  in a throwaway repo (clean lockfile passes, `https://user:tok@...` is blocked).
+- Stopping point: three review rounds found smaller hook gaps each time, and each new rule risked
+  new false positives. Forms like `node -p process.env` are accepted as out of scope for a regex
+  hook (see README). The hook is not reviewed further in this task.

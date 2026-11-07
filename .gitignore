@@ -1,2 +1,33 @@
+# IDE / OS
 /.idea/
+.DS_Store
+
+# Personal study notes
 /GLOSSARY.md
+
+# Node
+node_modules/
+dist/
+coverage/
+*.log
+
+# Secrets and local env
+.env*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Terraform (keep .terraform.lock.hcl committed)
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+*.tfplan
+crash.log
+crash.*.log
+
+# Claude Code personal settings
+.claude/settings.local.json

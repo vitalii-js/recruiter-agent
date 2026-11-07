@@ -1,0 +1,6 @@
+title = "recruiter-agent gitleaks config"
+
+# The default rules already skip lockfiles (package-lock.json); the pre-commit
+# hook checks lockfile registry URLs for embedded credentials separately.
+[extend]
+useDefault = true

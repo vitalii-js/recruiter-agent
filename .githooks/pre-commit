@@ -1,0 +1,20 @@
+#!/bin/sh
+# Blocks commits that contain keys, tokens or other secrets.
+# Activated by `npm install` (prepare script sets core.hooksPath=.githooks).
+set -eu
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "pre-commit: gitleaks is not installed, so the commit is blocked." >&2
+  echo "Install it: brew install gitleaks  (or see https://github.com/gitleaks/gitleaks#installing)" >&2
+  exit 1
+fi
+
+# gitleaks' built-in config skips package-lock.json, so check the one place a
+# lockfile can carry a secret: a registry URL with embedded credentials.
+if git diff --cached --name-only | grep -q '^package-lock\.json$' &&
+  git show :package-lock.json | grep -nE '"resolved": *"[a-z+]+://[^"/]*@'; then
+  echo "pre-commit: package-lock.json has a registry URL with credentials. Remove them." >&2
+  exit 1
+fi
+
+exec gitleaks git --pre-commit --staged --redact --verbose --config .gitleaks.toml
