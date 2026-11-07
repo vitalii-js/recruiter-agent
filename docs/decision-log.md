@@ -168,3 +168,47 @@ go in [`adr/`](adr/README.md).
 - The secret-blocking hook blocked a Bash heredoc that held a Python regex `(.*?)` (read as a
   dotfile glob). This is the known trade-off from Task 1.1. The script was written with the Write
   tool instead.
+
+## 2026-11-07 — Task 1.4: MCP server (OpenSpec `mcp-server`)
+
+**Done**
+
+- Four tools (`get_summary`, `get_skills`, `get_projects`, `search_experience`) as pure functions
+  `(profile, input) -> found | not_found`. Thin wrappers turn them into MCP results. `not_found` is
+  a normal result (`isError: false`) whose text tells the model not to guess. Only a real failure
+  uses `isError: true`, with the generic text "The profile is temporarily unavailable."
+- Matching (`src/match/terms.ts`): tools take short terms, not questions. The term is searched for
+  in the data (whole phrase, word boundaries, case-insensitive), never the data in the term, so
+  "React Native" does not match React and "Java" does not match JavaScript. Skill aliases expand
+  ("TS" -> TypeScript). `containsTerm` moved here from `persona-spec.ts`, which re-exports it.
+- Stateless MCP over the SDK's `WebStandardStreamableHTTPServerTransport` (JSON responses, no
+  sessions, a new server per request). One `Request -> Response` handler is used by the Lambda
+  Function URL adapter and the local dev server (`npm run dev`, 127.0.0.1 only, Host check).
+  The handler returns 404 for other paths, 405 for non-POST, and 413 above 64 KB.
+- Profile store: local files or S3 (`PROFILE_BUCKET`/`PROFILE_PREFIX`), validation with the
+  existing schema and consistency checks, a 5-minute cache shared by concurrent loads, and the
+  last good profile on reload failure. On Lambda without a bucket it fails closed. Load
+  failures are logged as JSON lines and never returned to clients. Query text is not logged.
+- 323 tests in total (171 new). A negative sweep reads every "Not in profile" term from
+  `specs/persona.md` and asserts `not_found` from every term tool.
+- Checked with the official MCP Inspector (CLI mode) against `npm run dev`: found and not_found
+  for every tool, and invalid input rejected.
+
+**What went wrong / how it was fixed**
+
+- Spike first (task 1.2): the web-standard transport exists in SDK 1.32 and accepts zod 4
+  `strictObject` schemas (`additionalProperties: false`). It also showed that a stateless `GET`
+  opens an SSE stream by default, which is why the handler returns 405 before the SDK sees it.
+  The SDK reports invalid tool input as an `isError` result, not a JSON-RPC error.
+- `sessionIdGenerator: undefined` does not compile under `exactOptionalPropertyTypes`. Leaving the
+  option out gives the same stateless mode.
+- Design D4 planned to read the server version from `package.json`, but the build's
+  `rootDir: src` forbids that import. Now `src/version.ts` holds the version, and a test keeps it
+  equal to `package.json`.
+- The first dev-server test hid the allowed-Host path behind a port-0 workaround. The server now
+  takes the port from its listening socket, and both paths are tested over real `node:http`.
+- Port 3000 was taken by an unrelated local process, so the curl calls first hit the wrong
+  server. README documents `PORT=3999 npm run dev`.
+- An Inspector run showed "Tool ... not found" for every call with arguments. The cause was my
+  zsh loop: unquoted `$args` is not word-split in zsh, so the whole string was sent as the tool
+  name. The server answered correctly. Rerun with `${=args}`, and every result matched the spec.

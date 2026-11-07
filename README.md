@@ -38,6 +38,34 @@ npm test           # Vitest unit tests
 npm run build      # compile to dist/
 ```
 
+### Run locally
+
+```sh
+npm run dev        # builds, then serves MCP at http://127.0.0.1:3000/mcp
+PORT=3999 npm run dev   # if port 3000 is taken
+```
+
+Connect [MCP Inspector](https://github.com/modelcontextprotocol/inspector) with
+`npx @modelcontextprotocol/inspector`, choose the **Streamable HTTP** transport and enter the URL
+above. The server is stateless (no sessions) and accepts only `POST /mcp`. Locally it binds to
+127.0.0.1 and rejects requests whose `Host` is not `localhost` or `127.0.0.1`.
+
+Tools: `get_summary`, `get_skills`, `get_projects`, `search_experience`. Pass short terms
+(`"TypeScript"`, `"Kubernetes"`), not questions. A term the profile does not mention returns
+`status: "not_found"`.
+
+Environment variables:
+
+| Variable         | Default         | Meaning                                         |
+| ---------------- | --------------- | ----------------------------------------------- |
+| `PORT`           | `3000`          | Local dev server port                           |
+| `PROFILE_DIR`    | `data/profile/` | Local profile directory (when no bucket is set) |
+| `PROFILE_BUCKET` | _unset_         | Read the profile from this S3 bucket instead    |
+| `PROFILE_PREFIX` | `profile/`      | Key prefix inside the bucket                    |
+
+On Lambda, `PROFILE_BUCKET` is required: without it the tools return "profile unavailable" rather
+than falling back to files bundled with the code. The profile is cached for 5 minutes.
+
 Repository layout:
 
 | Path     | Contents                            |

@@ -1,6 +1,10 @@
 // Reads the machine-checkable parts of specs/persona.md: the "Not in profile" lists and the
 // project and experience headings. See design D4/D5 of the persona-profile change.
 
+import { containsTerm } from '../match/terms.js';
+
+export { containsTerm };
+
 export interface AbsentEntry {
   name: string;
   terms: string[];
@@ -58,14 +62,6 @@ export function parseAbsentLists(markdown: string): AbsentLists {
 export function parseHeadingNames(markdown: string, kind: 'Project' | 'Experience'): string[] {
   const pattern = new RegExp(`^### ${kind}: (.+)$`, 'gm');
   return [...markdown.matchAll(pattern)].map((match) => (match[1] ?? '').trim());
-}
-
-const escapeRegExp = (text: string): string => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-/** True when `term` occurs in `text` as a whole word (or phrase), ignoring case. */
-export function containsTerm(text: string, term: string): boolean {
-  const pattern = new RegExp(`(?<![A-Za-z0-9])${escapeRegExp(term)}(?![A-Za-z0-9])`, 'i');
-  return pattern.test(text);
 }
 
 export interface TermHit {
